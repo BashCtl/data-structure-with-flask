@@ -55,7 +55,7 @@ class HashTable:
                 if node.next_node:
                     while node.next_node:
                         llist_string += (
-                            f"{str(node.data.key)} : {str(node.data.value)} -->")
+                            f"{str(node.data.key)} : {str(node.data.value)} --> ")
                         node = node.next_node
                     llist_string += (
                         f"{str(node.data.key)} : {str(node.data.value)} --> None"
