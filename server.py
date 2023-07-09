@@ -8,6 +8,7 @@ import linked_list
 import binary_search_tree
 import hash_table
 import random
+import custom_q
 
 # app
 app = Flask(__name__)
@@ -147,11 +148,6 @@ def create_blog_post(user_id):
     return jsonify({"message": f"{ht.get_value('title')} - blog post is created."}), 200
 
 
-# @app.route("/blog_post/<user_id>", methods=["GET"])
-# def get_all_blog_posts(user_id):
-#     pass
-
-
 @app.route("/blog_post/<blog_post_id>", methods=["GET"])
 def get_one_blog_post(blog_post_id):
     blog_posts = BlogPost.query.all()
@@ -171,6 +167,32 @@ def get_one_blog_post(blog_post_id):
     if not post:
         return jsonify({"message": "post not found"})
     return jsonify(post)
+
+
+@app.route("/blog_post/numeric_body", methods=["GET"])
+def get_numeric_post_bodies():
+    blog_posts = BlogPost.query.all()
+
+    q = custom_q.Queue()
+    for post in blog_posts:
+        q.enqueue(post)
+    return_list = []
+    for _ in range(len(blog_posts)):
+        post = q.dqueue()
+        numeric_body = 0
+        for char in post.data.body:
+            numeric_body += ord(char)
+        post.data.body = numeric_body
+
+        return_list.append(
+            {
+                "id": post.data.id,
+                "title": post.data.title,
+                "body": post.data.body,
+                "user_id": post.data.user_id
+            }
+        )
+    return jsonify(return_list)
 
 
 @app.route("/blog_post/<blog_post_id>", methods=["DELETE"])
